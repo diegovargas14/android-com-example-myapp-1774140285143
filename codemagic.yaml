@@ -1,0 +1,22 @@
+workflows:
+  android-build:
+    name: Android Build
+    instance_type: linux
+    environment:
+      java: 17
+      vars:
+        ANDROID_HOME: /usr/local/share/android-sdk
+        ANDROID_SDK_ROOT: /usr/local/share/android-sdk
+    scripts:
+      - name: Set up local.properties
+        script: echo "sdk.dir=$ANDROID_HOME" > local.properties
+      - name: Accept licenses
+        script: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      - name: Build
+        script: |
+          gradle wrapper
+          chmod +x gradlew
+          ./gradlew assembleDebug
+    artifacts:
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
